@@ -35,8 +35,7 @@
   text-align: center;
   border-radius: 3px;
 }
-
-.component-dropdown-container.disabled .component-dropdown-value {
+.component-dropdown-container.disabled .component-dropdown-value{
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -44,6 +43,7 @@
 .component-dropdown-value {
   padding: 10px 20px;
   cursor: pointer;
+  width: 150px;
 }
 .component-dropdown-list {
   position: absolute;
