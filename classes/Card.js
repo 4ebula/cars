@@ -11,20 +11,7 @@ export default class Card {
       <div class="component-card-descr">${description}</div>
       <button href="#car" class="component-card-more">Learn more..</button>
     `;
-    const buttonReadMore = document.createElement("button");
-    buttonReadMore.innerText = "Подробнее";
-    buttonReadMore.onclick = () => {
-      onClick(id);
-    };
-    containerElement.append(buttonReadMore);
-
-    this.car = {
-      brand: brand,
-      model: model,
-      img: img,
-      price: price,
-      description: description,
-    }
+    
     containerElement.querySelector('button').addEventListener('click', () => {
       const a = document.createElement('a');
       a.href = '#car';
@@ -62,8 +49,6 @@ export default class Card {
         </table>
         </div>
       `;
-      console.log(event.target.closest('.component-card'));
-      console.log(this.car);
     });
 
     return containerElement;
