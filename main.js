@@ -1,33 +1,7 @@
-class Dropdown {
-  _selectedValue;
-  constructor(defaultValue, list, name, dependance = [null, null], initialState = false) {
-    this.name = name;
-    this.defaultValue = defaultValue;
-    this.listItems = list;
-    [this._master, this._slave] = dependance;
-    if (this._master !== null) {
-      this._master._slave = this;
-    }
-    this.element = this.createList(list, defaultValue, initialState);
-    this.element.addEventListener('click', () => {
-      this.element.classList.toggle('active');
-      if (event.target.matches('li')) {
-        const value = event.target.textContent;
-        this.setSelectedValue = value;
-        if (this._slave.name === 'button') {
-          this._slave.element.classList.remove('disabled');
-        }
-        else {
-          // TODO: expand to have more than 2 select fields
-          this._slave.element.classList.remove('disabled');
-          this._slave.clear();
-          this.populateList.call(this._slave.element, cars.filter((e) => {
-            if (e.brand === value) return e;
-          }).map((e) => e.model));
-        }
-      }
-    });
-  }
+import Dropdown from "./classes/Dropdown.js";
+import Card from "./classes/Card.js";
+import Router from "./classes/Router.js";
+import BigCard from "./classes/BigCard.js";
 
   createList(values, defaultValue, initialState) {
     const div = document.createElement('div');
@@ -49,9 +23,26 @@ class Dropdown {
     this.element.querySelector('.component-dropdown-value').textContent = value;
   }
 
-  get value() {
-    return this._selectedValue;
+// Фильтры
+const modelDropdown = new Dropdown("Выберите модель", []);
+const brandDropdown = new Dropdown("Выберите марку", [], (brand) => {
+  modelDropdown.setItemsList([]);
+  modelDropdown.clearSelectedValue();
+  if (brand) {
+    getModels(brand).then((models) => {
+      modelDropdown.setItemsList(models);
+    });
   }
+});
+
+getBrands().then((brands) => {
+  brandDropdown.listItems = [];
+  brandDropdown.setItemsList(brands);
+  brands.forEach((elem) => { brandDropdown.listItems.push(elem) });
+});
+
+filtersContainer.append(brandDropdown.element);
+filtersContainer.append(modelDropdown.element);
 
   clear() {
     this.element.querySelector('.component-dropdown-value').textContent = this.defaultValue;
@@ -75,36 +66,25 @@ class Dropdown {
   }
 }
 
-function Card({ brand, model, img, price, description }) {
-  const containerElement = document.createElement('div');
-  containerElement.classList.add('component-card');
+function getBrands() {
+  return fetch("https://cars-server.herokuapp.com/brands").then((response) => {
+    return response.json();
+  });
+}
 
-  const imgElement = document.createElement('img');
-  imgElement.classList.add('component-img');
-  imgElement.src = 'img/' + img;
-  containerElement.append(imgElement);
+function getModels(brand) {
+  return fetch(`https://cars-server.herokuapp.com/models/${brand}`).then((response) => {
+    return response.json();
+  });
+}
 
-  const brandElement = document.createElement('div');
-  brandElement.classList.add('component-brand');
-  brandElement.innerText = brand;
-  containerElement.append(brandElement);
-
-  const modelElement = document.createElement('div');
-  modelElement.classList.add('component-model');
-  modelElement.innerText = model;
-  containerElement.append(model);
-
-  const priceElement = document.createElement('div');
-  priceElement.classList.add('component-price');
-  priceElement.innerText = price;
-  containerElement.append(priceElement);
-
-  const descrElement = document.createElement('div');
-  descrElement.classList.add('component-descr');
-  descrElement.innerText = description;
-  containerElement.append(descrElement);
-
-  return containerElement;
+function getCar(id) {
+  // Получить авто по id
+  return fetch(`https://cars-server.herokuapp.com/cars/${id}`).then(
+    (response) => {
+      return response.json();
+    }
+  );
 }
 
 fetch('server-responce.txt')
