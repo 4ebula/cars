@@ -44,15 +44,14 @@ getBrands().then((brands) => {
 filtersContainer.append(brandDropdown.element);
 filtersContainer.append(modelDropdown.element);
 
-  clear() {
-    this.element.querySelector('.component-dropdown-value').textContent = this.defaultValue;
-    this._selectedValue = '';
-    let button = this._slave;
-    while (button.name !== 'button') {
-      button = button._slave;
-    }
-    button.element.classList.add('disabled');
-  }
+getCars().then((cars) => {
+  Card.appendCards(cardsContainer, cars, (carId) => {
+    router.goTo("#car");
+    getCar(carId).then((car) => {
+      BigCard.appendCard(bigCardContainer, car);
+    });
+  });
+}).finally(() => document.body.classList.remove('loading'));
 
   populateList(values) {
     const ul = this.querySelector('ul');
@@ -63,7 +62,16 @@ filtersContainer.append(modelDropdown.element);
       li.textContent = e;
       ul.append(li);
     });
-  }
+  }).finally(() => document.body.classList.remove('loading'));
+};
+
+// Запросы к серверу
+function getCars() {
+  // Получить все авто
+  document.body.classList.add('loading');
+  return fetch("https://cars-server.herokuapp.com/cars").then((response) => {
+    return response.json();
+  });
 }
 
 function getBrands() {
