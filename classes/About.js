@@ -34,8 +34,3 @@ export class About {
       }
   }
 }
-
-const about = document.querySelector('.about');
-const menu = about.querySelector('menu');
-const menuButtons = Object.values(menu.querySelectorAll('button'));
-const aboutHeaders = Object.values(about.querySelectorAll('section')).map((e) => e.querySelector('h2'));
